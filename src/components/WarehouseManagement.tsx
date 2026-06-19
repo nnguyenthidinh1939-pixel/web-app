@@ -755,6 +755,9 @@ export default function WarehouseManagement({ subTab, lang = "vi", userRole }: W
     status: "Active"
   });
 
+  const [inlineDragActive, setInlineDragActive] = useState(false);
+  const [modalDragActive, setModalDragActive] = useState(false);
+
   // Purchase Order Form / Modal
   const [isPoModalOpen, setIsPoModalOpen] = useState(false);
   const [poSupplierName, setPoSupplierName] = useState("");
@@ -1288,17 +1291,102 @@ export default function WarehouseManagement({ subTab, lang = "vi", userRole }: W
                               </div>
                             </div>
 
-                            <div>
+                            <div className="space-y-2">
                               <label className="block text-[8px] font-mono text-zinc-500 uppercase tracking-widest mb-1 italic font-bold">
-                                {t("prod_form_image") || "Link ảnh"}
+                                {t("prod_form_image") || "Link ảnh / Hình ảnh thiết bị"}
                               </label>
-                              <input
-                                type="text"
-                                value={productForm.image}
-                                placeholder="https://example.com/image.png"
-                                onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 px-2 py-1.5 rounded-lg focus:border-[#CCFF00] outline-none text-[9px] text-zinc-400 font-mono"
-                              />
+                              
+                              {/* Drag and Drop Dropzone */}
+                              <div 
+                                className={`relative border border-dashed rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                                  inlineDragActive 
+                                    ? "border-[#CCFF00] bg-[#CCFF00]/5 text-white" 
+                                    : "border-white/10 hover:border-[#CCFF00]/60 bg-white/[0.02] text-zinc-400 hover:text-zinc-200"
+                                }`}
+                                onDragOver={(e) => {
+                                  e.preventDefault();
+                                  setInlineDragActive(true);
+                                }}
+                                onDragLeave={(e) => {
+                                  e.preventDefault();
+                                  setInlineDragActive(false);
+                                }}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  setInlineDragActive(false);
+                                  const file = e.dataTransfer.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                      setProductForm({ ...productForm, image: reader.result as string });
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                                onClick={() => {
+                                  document.getElementById("inline-image-file-input")?.click();
+                                }}
+                              >
+                                <input
+                                  type="file"
+                                  id="inline-image-file-input"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      const reader = new FileReader();
+                                      reader.onloadend = () => {
+                                        setProductForm({ ...productForm, image: reader.result as string });
+                                      };
+                                      reader.readAsDataURL(file);
+                                    }
+                                  }}
+                                />
+
+                                {productForm.image ? (
+                                  <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-white/10 group">
+                                    <img 
+                                      src={productForm.image} 
+                                      alt="Preview" 
+                                      className="w-full h-full object-cover" 
+                                      referrerPolicy="no-referrer" 
+                                    />
+                                    <div className="absolute inset-x-0 inset-y-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                      <span className="text-[8px] font-bold text-red-400 uppercase tracking-wider">XÓA / REMOVE</span>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setProductForm({ ...productForm, image: "" });
+                                      }}
+                                      className="absolute inset-x-0 inset-y-0 w-full h-full opacity-0 cursor-pointer"
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center justify-center py-1">
+                                    <Plus className="w-5 h-5 text-zinc-500 mb-1" />
+                                    <span className="text-[9px] font-bold uppercase tracking-wider text-center block">
+                                      {lang === "vi" ? "KÉO & THẢ ẢNH HOẶC CLICK ĐỂ CHỌN FILE" : "DRAG & DROP IMAGE OR CLICK TO SELECT"}
+                                    </span>
+                                    <span className="text-[7.5px] font-mono text-zinc-500 mt-0.5 text-center block">
+                                      {t("img_desc_help") || "Hỗ trợ PNG, JPG, JPEG dưới 2MB"}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="relative flex items-center mt-2">
+                                <span className="absolute left-2 text-[8px] font-mono text-zinc-600 uppercase tracking-widest">{lang === 'vi' ? "Hoặc URL" : "OR URL"}</span>
+                                <input
+                                  type="text"
+                                  value={productForm.image}
+                                  placeholder="https://example.com/image.png"
+                                  onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
+                                  className="w-full bg-white/5 border border-white/10 pl-14 pr-2 py-1 rounded-lg focus:border-[#CCFF00] outline-none text-[8.5px] text-zinc-400 font-mono"
+                                />
+                              </div>
                             </div>
                           </div>
 
@@ -1922,6 +2010,7 @@ export default function WarehouseManagement({ subTab, lang = "vi", userRole }: W
                   {editingProduct ? t("edit_product_title") : t("create_product_title")}
                 </h3>
                 <button 
+                  type="button"
                   onClick={() => setIsProductModalOpen(false)}
                   className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white"
                 >
@@ -2036,39 +2125,99 @@ export default function WarehouseManagement({ subTab, lang = "vi", userRole }: W
 
                 <div>
                   <label className="block text-zinc-400 font-bold mb-1">{t("prod_form_img")}</label>
-                  <div className="flex gap-4 items-center">
-                    <div className="w-16 h-16 rounded-xl bg-neutral-900 border border-white/10 flex items-center justify-center text-zinc-600 overflow-hidden shrink-0">
-                      {productForm.image ? (
-                        <img src={productForm.image} alt="Preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      ) : (
-                        <span className="text-[10px] uppercase font-bold text-zinc-500">{t("img_not_uploaded")}</span>
-                      )}
-                    </div>
-                    <div className="flex-1 text-left">
-                      <input 
-                        type="file" 
-                        accept="image/*"
-                        id="product-image-upload"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              setProductForm({ ...productForm, image: reader.result as string });
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                      />
-                      <label 
-                        htmlFor="product-image-upload"
-                        className="px-4 py-2 rounded bg-white/5 border border-white/10 hover:bg-white/10 text-zinc-300 hover:text-white font-bold text-xs cursor-pointer inline-block"
-                      >
-                        {t("img_select_btn")}
-                      </label>
-                      <p className="text-[10px] text-zinc-500 mt-1">{t("img_desc_help")}</p>
-                    </div>
+                  
+                  {/* Premium Modal Drag and Drop zone */}
+                  <div 
+                    className={`relative w-full border border-dashed rounded-2xl p-6 flex flex-col items-center justify-center gap-2.5 transition-all cursor-pointer ${
+                      modalDragActive 
+                        ? "border-[#CCFF00] bg-[#CCFF00]/5 text-white animate-pulse" 
+                        : "border-white/10 hover:border-[#CCFF00]/50 bg-neutral-900/60 text-zinc-400 hover:text-zinc-200"
+                    }`}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setModalDragActive(true);
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault();
+                      setModalDragActive(false);
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setModalDragActive(false);
+                      const file = e.dataTransfer.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setProductForm({ ...productForm, image: reader.result as string });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    onClick={() => {
+                      document.getElementById("modal-image-file-input")?.click();
+                    }}
+                  >
+                    <input
+                      type="file"
+                      id="modal-image-file-input"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setProductForm({ ...productForm, image: reader.result as string });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+
+                    {productForm.image ? (
+                      <div className="relative w-28 h-28 rounded-xl overflow-hidden border border-white/10 group shadow-lg">
+                        <img 
+                          src={productForm.image} 
+                          alt="Preview" 
+                          className="w-full h-full object-cover" 
+                          referrerPolicy="no-referrer" 
+                        />
+                        <div className="absolute inset-x-0 inset-y-0 bg-black/65 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-all">
+                          <span className="text-[10px] font-black uppercase text-red-500 tracking-wider">XÓA / REMOVE</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setProductForm({ ...productForm, image: "" });
+                          }}
+                          className="absolute inset-x-0 inset-y-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center text-center">
+                        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-2.5 border border-white/5">
+                          <Plus className="w-5 h-5 text-zinc-400" />
+                        </div>
+                        <p className="text-xs font-black uppercase tracking-widest text-[#CCFF00]">
+                          {lang === "vi" ? "KÉO THẢ HÌNH ẢNH HOẶC CLICK ĐỂ CHỌN FILE" : "DRAG & DROP IMAGE OR CLICK TO BROWSE"}
+                        </p>
+                        <p className="text-[10px] text-zinc-500 font-medium max-w-[280px] mt-1">
+                          {t("img_desc_help") || "Hỗ trợ định dạng PNG, JPG, JPEG dưới 2MB. Tệp ảnh sẽ được lưu trữ trực tiếp."}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="relative flex items-center mt-3">
+                    <span className="absolute left-3 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{lang === 'vi' ? "Hoặc dán URL" : "OR PASTE URL"}</span>
+                    <input
+                      type="text"
+                      value={productForm.image}
+                      placeholder="https://example.com/image.png"
+                      onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 pl-24 pr-3 py-2 rounded-xl focus:border-[#CCFF00] outline-none text-xs text-zinc-300 font-mono"
+                    />
                   </div>
                 </div>
 

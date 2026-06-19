@@ -7003,7 +7003,7 @@ export default function App() {
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <span className="text-[7.5px] font-mono text-zinc-500 uppercase tracking-widest block italic leading-none">
-                            HLV THỂ HÌNH CHUYÊN NGHIỆP
+                            {lang === "vi" ? "HLV THỂ HÌNH CHUYÊN NGHIỆP" : (lang === "zh" ? "专业健身教练" : "PROFESSIONAL FITNESS COACH")}
                           </span>
                           <span className="text-sm font-black italic uppercase tracking-tight text-[#CCFF00]">COACH_GOLD_PASS</span>
                         </div>
@@ -7020,10 +7020,12 @@ export default function App() {
                         <div className="flex-1 min-w-0">
                           <p className="text-[12px] font-black italic uppercase truncate text-white block">{activeMemberData.fullName}</p>
                           <p className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider block mt-0.5">
-                            Trạng thái: Hoạt động (Admin Verified)
+                            {lang === "vi" 
+                              ? "Trạng thái: Hoạt động (Admin Verified)" 
+                              : (lang === "zh" ? "状态：活跃（管理员已验证）" : "Status: Active (Admin Verified)")}
                           </p>
                           <p className="text-[8.5px] font-mono text-zinc-500 mt-1 block">
-                            Chuyên môn: {trainers.find(t => t.id === activeMemberData.id)?.expertise?.join(", ") || "Fitness, Cardio"}
+                            {lang === "vi" ? "Chuyên môn:" : (lang === "zh" ? "专业领域:" : "Expertise:")} {trainers.find(t => t.id === activeMemberData.id)?.expertise?.join(", ") || "Fitness, Cardio"}
                           </p>
                         </div>
                       </div>
@@ -7034,13 +7036,22 @@ export default function App() {
                           type="button"
                           onClick={() => {
                             playBeep();
-                            addNotification("Quét thẻ HLV ra vào cổng thành công! Đã ghi nhận trực ca.", "success");
+                            addNotification(
+                              lang === "vi" 
+                                ? "Quét thẻ HLV ra vào cổng thành công! Đã ghi nhận trực ca." 
+                                : (lang === "zh" ? "教练扫码进出门成功！已登记值班。" : "Coach gate scan successful! Shift attendance registered."), 
+                              "success"
+                            );
                             
                             const coachNotif = {
                               id: Date.now(),
-                              title: "HLV RA VÀO CỔNG PHÒNG TẬP",
-                              body: `Ghi nhận quét mã HLV ra vào cổng tập thành công lúc ${new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}. Cảm ơn sự cống hiến chuyên môn của bạn!`,
-                              time: "Vừa xong",
+                              title: lang === "vi" ? "HLV RA VÀO CỔNG PHÒNG TẬP" : (lang === "zh" ? "教练进出健身房" : "COACH GATE ATTENDANCE"),
+                              body: lang === "vi" 
+                                ? `Ghi nhận quét mã HLV ra vào cổng tập thành công lúc ${new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}. Cảm ơn sự cống hiến chuyên môn của bạn!` 
+                                : (lang === "zh" 
+                                  ? `于 ${new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })} 成功记录教练门禁扫码。感谢您的专业付出！` 
+                                  : `Success entry gate sweep logged at ${new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}. Thank you for your professional dedication!`),
+                              time: lang === "vi" ? "Vừa xong" : (lang === "zh" ? "刚刚" : "Just now"),
                               type: "success" as const,
                               read: false
                             };
@@ -7049,7 +7060,7 @@ export default function App() {
                           className="w-full bg-[#CCFF00] hover:bg-white text-black font-black py-2.5 rounded-xl text-[9px] uppercase tracking-widest transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-lg"
                         >
                           <QrCode className="w-4 h-4" />
-                          QUÉT THẺ HLV RA VÀO CỔNG
+                          {lang === "vi" ? "QUÉT THẺ HLV RA VÀO CỔNG" : (lang === "zh" ? "教练扫码进出通道" : "SCAN COACH GATE ENTRY")}
                         </button>
                       </div>
                     </div>
@@ -7057,13 +7068,17 @@ export default function App() {
                     {/* PT KPI / COMMISSIONS COMPACT CARD */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="bg-zinc-900 border border-white/5 p-3.5 rounded-2xl">
-                        <p className="text-[8.5px] font-mono font-black text-zinc-500 uppercase tracking-widest">Tỷ lệ hoa hồng</p>
+                        <p className="text-[8.5px] font-mono font-black text-zinc-500 uppercase tracking-widest">
+                          {lang === "vi" ? "Tỷ lệ hoa hồng" : (lang === "zh" ? "佣金比率" : "Commission Rate")}
+                        </p>
                         <p className="text-base font-black text-[#CCFF00] font-mono mt-0.5">
-                          {((trainers.find(t => t.id === activeMemberData.id)?.commissionRate || 0.15) * 100).toFixed(0)}% Doanh thu
+                          {((trainers.find(t => t.id === activeMemberData.id)?.commissionRate || 0.15) * 100).toFixed(0)}% {lang === "vi" ? "Doanh thu" : (lang === "zh" ? "业绩" : "Revenue")}
                         </p>
                       </div>
                       <div className="bg-zinc-900 border border-white/5 p-3.5 rounded-2xl">
-                        <p className="text-[8.5px] font-mono font-black text-zinc-500 uppercase tracking-widest">Cấp độ HLV</p>
+                        <p className="text-[8.5px] font-mono font-black text-zinc-500 uppercase tracking-widest">
+                          {lang === "vi" ? "Cấp độ HLV" : (lang === "zh" ? "教练等级" : "Coach Level")}
+                        </p>
                         <p className="text-base font-black text-white font-mono uppercase italic tracking-tight mt-0.5">
                           {trainers.find(t => t.id === activeMemberData.id)?.level || "Senior"} PT
                         </p>
@@ -7076,11 +7091,11 @@ export default function App() {
                         <div className="flex items-center gap-2">
                           <Users className="w-4 h-4 text-[#CCFF00]" />
                           <span className="text-[10px] font-mono font-black uppercase tracking-widest text-[#CCFF00]">
-                            HỌC VIÊN ĐANG KÈM RIÊNG
+                            {lang === "vi" ? "HỌC VIÊN ĐANG KÈM RIÊNG" : (lang === "zh" ? "专属私教会员" : "ASSIGNED CLIENTS")}
                           </span>
                         </div>
                         <span className="text-[8.5px] font-mono text-zinc-500 italic uppercase font-bold">
-                          Đồng bộ Admin
+                          {lang === "vi" ? "Đồng bộ Admin" : (lang === "zh" ? "系统已同步" : "Admin Sync")}
                         </span>
                       </div>
 
@@ -7099,22 +7114,28 @@ export default function App() {
                                       {client?.fullName?.charAt(0) || "HV"}
                                     </div>
                                     <div className="min-w-0">
-                                      <p className="text-xs font-black text-white uppercase truncate">{client?.fullName || "Học viên ẩn danh"}</p>
-                                      <p className="text-[8.5px] font-mono text-zinc-500 uppercase mt-0.5">SĐT: {client?.phone || "N/A"} • Gói: {client?.package || "Premium PT"}</p>
+                                      <p className="text-xs font-black text-white uppercase truncate">{client?.fullName || (lang === "vi" ? "Học viên ẩn danh" : "Anonymous Client")}</p>
+                                      <p className="text-[8.5px] font-mono text-zinc-500 uppercase mt-0.5">
+                                        {lang === "vi" ? "SĐT" : (lang === "zh" ? "手机" : "PHONE")}: {client?.phone || "N/A"} • {lang === "vi" ? "Gói" : (lang === "zh" ? "课程" : "Session")}: {client?.package || "Premium PT"}
+                                      </p>
                                     </div>
                                   </div>
                                   <span className={`px-2 py-0.5 rounded text-[8px] font-mono font-black uppercase ${
                                     a.status === "Active" ? "bg-[#CCFF00]/10 text-[#CCFF00]" : "bg-zinc-850 text-zinc-500"
                                   }`}>
-                                    {a.status === "Active" ? "ĐANG TẬP" : "HOÀN THÀNH"}
+                                    {a.status === "Active" 
+                                      ? (lang === "vi" ? "ĐANG TẬP" : (lang === "zh" ? "训练中" : "ACTIVE")) 
+                                      : (lang === "vi" ? "HOÀN THÀNH" : (lang === "zh" ? "已完成" : "DONE"))}
                                   </span>
                                 </div>
 
                                 {a.status === "Active" && (
                                   <div className="space-y-2 pt-2 border-t border-white/5">
                                     <div className="flex justify-between items-center text-[9px] font-mono text-zinc-400">
-                                      <span>Tiến độ buổi tập:</span>
-                                      <span className="text-[#CCFF00] font-black">{a.sessionsLeft} / {a.totalSessions} Buổi còn lại</span>
+                                      <span>{lang === "vi" ? "Tiến độ buổi tập:" : (lang === "zh" ? "课程总进度:" : "Session Progress:")}</span>
+                                      <span className="text-[#CCFF00] font-black">
+                                        {a.sessionsLeft} / {a.totalSessions} {lang === "vi" ? "Buổi còn lại" : (lang === "zh" ? "节剩余" : "Sessions Left")}
+                                      </span>
                                     </div>
                                     <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                                       <div className="h-full bg-[#CCFF00] rounded-full" style={{ width: `${(a.sessionsLeft/a.totalSessions)*100}%` }} />
@@ -7123,7 +7144,7 @@ export default function App() {
                                     <div className="flex gap-2 items-center mt-3">
                                       <input
                                         type="text"
-                                        placeholder="Ghi chú buổi tập (VD: Cardio & InBody...)"
+                                        placeholder={lang === "vi" ? "Ghi chú buổi tập (VD: Cardio & InBody...)" : (lang === "zh" ? "课程备注（如：有氧和身体成分分析...）" : "Session notes (e.g. Cardio & InBody...)")}
                                         value={notesVal}
                                         onChange={(e) => setTrainerSessionNotes(prev => ({ ...prev, [a.id]: e.target.value }))}
                                         className="flex-1 bg-zinc-900 border border-white/10 px-3 py-2 rounded-xl text-[10px] text-white outline-none focus:border-[#CCFF00] font-medium placeholder:text-zinc-650"
@@ -7131,12 +7152,12 @@ export default function App() {
                                       <button
                                         type="button"
                                         onClick={async () => {
-                                          await handleRecordSession(a.id, notesVal || "Điểm danh dạy thành công bởi HLV Mobile");
+                                          await handleRecordSession(a.id, notesVal || (lang === "vi" ? "Điểm danh dạy thành công bởi HLV Mobile" : "Session checked in successfully by mobile trainer"));
                                           setTrainerSessionNotes(prev => ({ ...prev, [a.id]: "" }));
                                         }}
                                         className="px-3 py-2 bg-[#CCFF00] hover:bg-white text-black font-black text-[9px] uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-md active:scale-95 shrink-0"
                                       >
-                                        DẠY XONG
+                                        {lang === "vi" ? "DẠY XONG" : (lang === "zh" ? "教学完成" : "SESSION DONE")}
                                       </button>
                                     </div>
                                   </div>
@@ -7147,7 +7168,9 @@ export default function App() {
                         </div>
                       ) : (
                         <div className="py-8 text-center border border-dashed border-white/5 bg-zinc-950/20 rounded-2xl text-zinc-500 font-mono text-[9px] uppercase">
-                          Hôm nay chưa có học viên nào được gán cho bạn.
+                          {lang === "vi" 
+                            ? "Hôm nay chưa có học viên nào được gán cho bạn." 
+                            : (lang === "zh" ? "今天还没有分配给您的专属私教会员。" : "No client assignments scheduled for you today.")}
                         </div>
                       )}
                     </div>
@@ -7312,7 +7335,235 @@ export default function App() {
                               })()}
                             </span>
                           </div>
-                          <div classNam            {/* TAB 4: PT & ĐỘI NGŨ HỖ TRỢ */}
+                          <div className="h-1.5 bg-zinc-805 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-[#CCFF00]" 
+                              style={{ 
+                                width: `${(() => {
+                                  if (!activeMemberData.registrationDate || !activeMemberData.expiryDate) return 50;
+                                  const start = new Date(activeMemberData.registrationDate).getTime();
+                                  const end = new Date(activeMemberData.expiryDate).getTime();
+                                  const total = end - start;
+                                  if (total <= 0) return 0;
+                                  const current = end - Date.now();
+                                  return Math.min(100, Math.max(0, (current / total) * 100));
+                                })()}%`
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </motion.div>
+            )}
+            {mobileActiveTab === "packages" && (
+              <motion.div
+                key="packages_panel"
+                initial={{ opacity: 0, scale: 0.98, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98, y: -12 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="space-y-4 pb-12 text-left"
+              >
+                <div>
+                  <span className="block text-[8px] font-mono font-black text-[#CCFF00] uppercase tracking-widest leading-none mb-1">
+                    FITGYM MEMBER TRAINING CONFIG
+                  </span>
+                  <h3 className="text-base font-black italic uppercase text-white font-display leading-none tracking-tight">
+                    {lang === 'vi' ? 'CÁC GÓI TẬP HIỆN CÓ' : (lang === 'zh' ? '健身套餐服务' : 'GYM MEMBER PACKAGES')}
+                  </h3>
+                  <p className="text-[10px] text-zinc-500 mt-1 leading-relaxed">
+                    {lang === 'vi' ? "Danh sách các gói tập gym và huấn luyện chuyên nghiệp luôn sẵn sàng để đăng ký hoặc gia hạn trực tuyến." : "Select from our live-synchronized fitness gym and PT plans to register, upgrade or renew instantly via QR."}
+                  </p>
+                </div>
+
+                <div className="space-y-3.5">
+                  {packages.map((pkg) => (
+                    <div 
+                      key={`mobile-pkg-${pkg.id}`}
+                      className="bg-zinc-900 border border-white/5 p-4 rounded-[2rem] space-y-4 relative overflow-hidden transition-all hover:border-[#CCFF00]/25 group"
+                    >
+                      {/* Ambient background aura */}
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-[#CCFF00]/2 blur-[30px] rounded-full pointer-events-none" />
+                      
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="space-y-1">
+                          <span className="inline-block px-1.5 py-0.5 rounded text-[7px] font-mono font-black uppercase bg-[#CCFF00]/10 text-[#CCFF00] border border-[#CCFF00]/15 tracking-wider">
+                            {pkg.duration}
+                          </span>
+                          <h4 className="text-[13px] font-black uppercase text-white tracking-tight">{translatePackageName(pkg.name)}</h4>
+                        </div>
+                        <span className="text-sm font-black font-mono text-[#CCFF00] italic">
+                          {pkg.price.toLocaleString("vi-VN")}đ
+                        </span>
+                      </div>
+
+                      <p className="text-[10px] text-zinc-400 font-sans leading-normal font-medium bg-zinc-950/30 p-3 rounded-2xl border border-white/5">
+                        {pkg.description || (lang === 'vi' ? "Trải nghiệm rèn luyện thể thao đầy đủ cơ sở vật chất tiêu chuẩn quốc tế tại Fit Gym." : "Access core fitness weights & equipment with world-class standard facilities.")}
+                      </p>
+
+                      <div className="flex justify-between items-center pt-1.5">
+                        <span className="text-[8px] font-mono text-zinc-500 font-black uppercase tracking-widest flex items-center gap-1.5 leading-none">
+                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+                          {lang === 'vi' ? 'Luôn có sẵn' : 'ALWAYS AVAILABLE'}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCheckoutPackage(pkg);
+                          }}
+                          className="bg-[#CCFF00] hover:bg-white text-black font-black px-4.5 py-2.5 rounded-xl text-[9px] uppercase tracking-wider transition-all scale-100 active:scale-95 cursor-pointer shadow-lg hover:shadow-[#CCFF00]/10 shrink-0"
+                        >
+                          {lang === 'vi' ? 'Đăng ký / Gia hạn' : 'Renew / Subscribe'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+            {mobileActiveTab === "chatbot" && (
+              <motion.div
+                key="chatbot_panel"
+                initial={{ opacity: 0, scale: 0.98, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98, y: -12 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="flex-1 w-full flex flex-col gap-3 justify-between relative bg-zinc-900/30 p-3 rounded-[1.8rem] border border-white/5 overflow-hidden text-left h-full"
+              >
+                {/* Chat Header */}
+                <div className="flex justify-between items-center shrink-0 border-b border-white/5 pb-2.5">
+                  <div className="flex items-center gap-3 text-left">
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setMobileActiveTab("home");
+                      }}
+                      className="w-8 h-8 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-white hover:text-[#CCFF00] active:scale-95 transition-all cursor-pointer"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <div>
+                      <span className="block text-[8px] font-mono font-black text-[#CCFF00] uppercase tracking-widest leading-none mb-1">
+                        FITGYM AI ASSISTANT CORE
+                      </span>
+                      <h3 className="text-base font-black italic uppercase text-white font-display leading-none tracking-tight">
+                        {lang === 'vi' ? 'TRỢ LÝ AI THÔNG MINH' : 'SMART AI TRAINER'}
+                      </h3>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#CCFF00] animate-pulse" />
+                    <span className="text-[8px] text-zinc-500 font-mono font-black uppercase">Core Live</span>
+                  </div>
+                </div>
+
+                {/* Messages Container */}
+                <div 
+                  ref={mobileChatScrollRef} 
+                  className="flex-1 overflow-y-auto space-y-3.5 pr-1 text-[12px] custom-scrollbar text-left scroll-smooth py-1"
+                >
+                  {/* Default greetings */}
+                  {chatMessages.length === 0 && (
+                    <div className="bg-zinc-900 border border-white/5 p-4 rounded-2xl space-y-3 text-left mt-1">
+                      <div className="w-8 h-8 rounded-xl bg-[#CCFF00]/10 border border-[#CCFF00]/20 flex items-center justify-center text-[#CCFF00] shrink-0">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="text-[11px] font-black uppercase text-white tracking-tight">
+                          {lang === 'vi' ? 'XIN CHÀO! TÔI LÀ FITGYM AI' : 'HELLO! I AM FITGYM AI'}
+                        </h4>
+                        <p className="text-[9.5px] leading-relaxed text-zinc-400 mt-1 font-medium">
+                          {lang === 'vi' 
+                            ? 'Tôi có thể xây dựng lịch tập cá nhân, tính lượng calo cho bữa ăn, tư vấn sản phẩm bổ sung dinh dưỡng hoặc hướng dẫn bạn tập luyện đạt hiệu quả cao nhất.' 
+                            : 'I can build customized workout sheets, count meal calories, recommend workout gear or supplements, or guide you to maximum efficiency.'}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-1.5 pt-2">
+                        {[
+                          lang === 'vi' ? "Lập giáo án tăng cơ 4 buổi/tuần" : "Build 4-day muscle split workout",
+                          lang === 'vi' ? "Gợi ý thực đơn giảm béo 1500 calo" : "1500 kcal fat loss nutrition plan",
+                          lang === 'vi' ? "Cách tập Squat đúng kỹ thuật để tránh chấn thương?" : "Correct Squat form to avoid lower back injury"
+                        ].map((prompt, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => handleSendMessage(undefined, prompt)}
+                            className="w-full text-left bg-zinc-950 border border-white/5 hover:border-[#CCFF00]/30 hover:bg-zinc-900 p-2.5 rounded-xl text-[9px] font-semibold text-zinc-400 hover:text-white transition-all cursor-pointer truncate"
+                          >
+                            + {prompt}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {chatMessages.map((msg, idx) => {
+                    const isUser = msg.role === "user";
+                    return (
+                      <div 
+                        key={idx} 
+                        className={`p-3.5 rounded-2xl max-w-[85%] shrink-0 text-left ${
+                          isUser 
+                            ? "bg-[#CCFF00]/10 border border-[#CCFF00]/20 ml-auto" 
+                            : "bg-zinc-900 border border-white/5 mr-auto"
+                        }`}
+                      >
+                        <span className="block text-[7px] font-mono text-[#CCFF00] uppercase tracking-widest mb-1 italic font-black">
+                          {isUser ? (lang === 'vi' ? "BẠN" : "YOU") : "FITGYM AI"}
+                        </span>
+                        <div className="prose prose-sm prose-invert max-w-none text-white text-xs leading-relaxed font-sans font-medium markdown-body">
+                          <Markdown>{msg.text}</Markdown>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Typing Indicator */}
+                  {isTyping && (
+                    <div className="bg-zinc-900 border border-white/5 p-3 rounded-2xl max-w-[50%] mr-auto text-left flex items-center justify-between gap-3">
+                      <span className="text-[7.5px] font-mono text-zinc-500 uppercase tracking-widest block italic font-bold">
+                        {lang === 'vi' ? "TRỢ LÝ ĐANG SUY NGHĨ..." : "Core AI thinking..."}
+                      </span>
+                      <div className="flex gap-1 items-center">
+                        <span className="w-1 h-1 bg-[#CCFF00] rounded-full animate-bounce [animation-delay:0ms]" />
+                        <span className="w-1 h-1 bg-[#CCFF00] rounded-full animate-bounce [animation-delay:150ms]" />
+                        <span className="w-1 h-1 bg-[#CCFF00] rounded-full animate-bounce [animation-delay:300ms]" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Input area */}
+                <form 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!chatInput.trim()) return;
+                    handleSendMessage(e);
+                  }}
+                  className="flex gap-2 shrink-0 pt-2 border-t border-white/5"
+                >
+                  <input
+                    type="text"
+                    placeholder={lang === 'vi' ? "Hỏi Trợ lý AI bất cứ điều gì..." : "Ask AI anything about workouts or meal plans..."}
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    className="flex-1 bg-zinc-950 border border-white/10 px-4 py-2.5 rounded-xl text-xs outline-none focus:border-[#CCFF00] font-bold text-white placeholder-zinc-650"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!chatInput.trim() || isTyping}
+                    className="w-10 h-10 bg-[#CCFF00] disabled:bg-zinc-900 disabled:text-zinc-500 hover:scale-[1.03] active:scale-95 text-black rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0"
+                  >
+                    <Send className="w-4.5 h-4.5" />
+                  </button>
+                </form>
+              </motion.div>
+            )}
             {mobileActiveTab === "support" && (
               <motion.div
                 key="support_staff_panel"
@@ -7941,249 +8192,12 @@ export default function App() {
                   );
                 })()}
               </motion.div>
-            )} giáo án, bài tập, thực đơn..." : (lang === 'zh' ? "向教练咨询健身计划、训练动作、食谱..." : "Ask trainer about workouts, diets...")) 
-                              : (lang === 'vi' ? "Hỏi hỗ trợ viên về thẻ tập, dịch vụ phòng..." : (lang === 'zh' ? "向客服咨询会员卡、更衣柜、场馆服务..." : "Ask representative about pass, amenities..."))}
-                            value={mobileChatInputText}
-                            onChange={(e) => setMobileChatInputText(e.target.value)}
-                            className="flex-1 bg-zinc-950 border border-white/10 px-4 py-2.5 rounded-xl text-xs outline-none focus:border-[#CCFF00] font-bold text-white placeholder-zinc-600"
-                          />
-                          <button
-                            type="submit"
-                            disabled={!mobileChatInputText.trim()}
-                            className="w-10 h-10 bg-[#CCFF00] disabled:bg-zinc-900 disabled:text-zinc-500 hover:scale-[1.03] active:scale-95 text-black rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0"
-                          >
-                            <Send className="w-4.5 h-4.5" />
-                          </button>
-                        </form>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div className="flex flex-col space-y-5 w-full">
-                      {/* Header bar */}
-                      <div className="flex justify-between items-center shrink-0">
-                        <div className="flex items-center gap-3 text-left">
-                          <button 
-                            type="button"
-                            onClick={() => {
-                              setMobileActiveTab("home");
-                            }}
-                            className="w-8 h-8 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-white hover:text-[#CCFF00] active:scale-95 transition-all cursor-pointer"
-                          >
-                            <ChevronLeft className="w-5 h-5" />
-                          </button>
-                          <div>
-                            <span className="block text-[8px] font-mono font-black text-[#CCFF00] uppercase tracking-widest leading-none mb-1">CUSTOMER SUPPORT & PT</span>
-                            <h3 className="text-base font-black italic uppercase text-white font-display leading-none tracking-tight">
-                              {lang === 'vi' ? 'PT & ĐỘI NGŨ HỖ TRỢ' : (lang === 'zh' ? '健身教练与支持团队' : 'TRAINERS & SUPPORT TEAM')}
-                            </h3>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Info banner informing users of support services */}
-                      <div className="bg-[#CCFF00]/5 border border-[#CCFF00]/10 rounded-2xl p-4 text-left relative overflow-hidden group shrink-0">
-                        <div className="relative z-10 flex gap-3.5 items-center">
-                          <div className="w-8 h-8 rounded-xl bg-[#CCFF00]/10 border border-[#CCFF00]/20 flex items-center justify-center text-[#CCFF00] shrink-0">
-                            <Users className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <p className="text-[11px] font-black uppercase text-white tracking-tight">
-                              {lang === 'vi' ? 'KẾT NỐI HỖ TRỢ 24/7' : (lang === 'zh' ? '24/7 联络客户支持' : 'CONNECT WITH SUPPORT 24/7')}
-                            </p>
-                            <p className="text-[9.5px] leading-relaxed text-zinc-400 mt-0.5">
-                              {lang === 'vi' ? 'Hỏi đáp huấn luyện cá nhân, chỉnh sửa hợp đồng hoặc góp ý chất lượng dịch vụ phòng máy trực tiếp.' : (lang === 'zh' ? '咨询私人教练、修改合同或直接反映服务质量。' : 'Get instant help from our personal trainers and reception staff members anytime.')}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Simulated Support Search */}
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder={lang === 'vi' ? "Tìm nhân viên hỗ trợ hoặc PT..." : (lang === 'zh' ? "搜索支持人员或健身教练..." : "Search representatives or trainers...")}
-                          value={mobileStaffSearch}
-                          onChange={(e) => setMobileStaffSearch(e.target.value)}
-                          className="w-full bg-zinc-900 border border-white/5 pl-10 pr-4 py-2.5 rounded-2xl text-xs font-semibold text-white outline-none focus:border-[#CCFF00]"
-                        />
-                        <Search className="absolute left-3.5 top-3 w-4 h-4 text-zinc-500" />
-                      </div>
-
-                      {/* Filter Sub-Tabs */}
-                      <div className="flex gap-2 pb-1 overflow-x-auto scrollbar-none">
-                        {[
-                          { id: "ALL", label: lang === 'vi' ? "Tất cả" : (lang === 'zh' ? "全部" : "All") },
-                          { id: "PT", label: lang === 'vi' ? "HLV Thể hình (PT)" : (lang === 'zh' ? "健身教练 (PT)" : "Personal Trainer (PT)") },
-                          { id: "STAFF", label: lang === 'vi' ? "Lễ tân / Support" : (lang === 'zh' ? "前台支援/客服" : "Receptionist / Support") }
-                        ].map(f => (
-                          <button
-                            key={f.id}
-                            type="button"
-                            onClick={() => setMobileStaffFilter(f.id)}
-                            className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
-                              mobileStaffFilter === f.id 
-                                ? "bg-[#CCFF00] text-black font-semibold" 
-                                : "bg-zinc-900 text-zinc-500 hover:text-white"
-                            }`}
-                          >
-                            {f.label}
-                          </button>
-                        ))}
-                      </div>
-
-                      {/* Section 1: Recent Chats (Hiện tin nhắn đã chat) */}
-                      <div className="space-y-2">
-                        <span className="block text-[8px] font-mono font-black text-zinc-500 uppercase tracking-widest leading-none mb-1.5">
-                          {lang === 'vi' ? 'HỘI THOẠI ĐANG CHAT' : (lang === 'zh' ? '当前聊天会话' : 'ACTIVE CONVERSATIONS')}
-                        </span>
-                        {activeContacts.length > 0 ? (
-                          <div className="grid grid-cols-1 gap-2">
-                            {activeContacts.map(contact => {
-                              const history = mobileDirectChats[contact.id] || [];
-                              const lastMsg = history[history.length - 1];
-                              const lastText = lastMsg ? lastMsg.text : "";
-                              const isMe = lastMsg ? lastMsg.sender === "MEMBER" : false;
-
-                              return (
-                                <div 
-                                  key={contact.id}
-                                  onClick={() => setActiveMobileChatId(contact.id)}
-                                  className="flex items-center gap-3 p-3 bg-zinc-900 border border-white/5 hover:border-[#CCFF00]/40 rounded-[1.6rem] transition-all cursor-pointer group hover:scale-[1.01]"
-                                >
-                                  <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center shrink-0 overflow-hidden relative border border-white/5">
-                                    {contact.avatar ? (
-                                      <img src={contact.avatar} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                                    ) : (
-                                      <UserIcon className="w-4 h-4 text-[#CCFF00]" />
-                                    )}
-                                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border border-zinc-900 rounded-full" />
-                                  </div>
-
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex justify-between items-baseline">
-                                      <h4 className="text-[11.5px] font-black uppercase text-white truncate leading-none">{contact.fullName}</h4>
-                                      <span className="text-[8px] font-mono text-zinc-500 shrink-0">{lastMsg?.time || (lang === 'vi' ? "Vừa xong" : (lang === 'zh' ? "刚刚" : "Just now"))}</span>
-                                    </div>
-                                    <p className="text-[10px] text-zinc-400 mt-1.5 truncate max-w-[210px] leading-none">
-                                      <span className={isMe ? "text-[#CCFF00] font-bold" : ""}>{isMe ? (lang === 'vi' ? "Bạn: " : (lang === 'zh' ? "你: " : "You: ")) : ""}</span>
-                                      {lastText}
-                                    </p>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <div className="p-4 bg-zinc-900/20 border border-dashed border-white/5 rounded-[1.8rem] text-center space-y-1.5">
-                            <div className="w-7 h-7 rounded-full bg-zinc-900 flex items-center justify-center mx-auto text-zinc-500">
-                              <MessageCircle className="w-3.5 h-3.5" />
-                            </div>
-                            <p className="text-[9.5px] text-zinc-500 leading-normal font-sans px-3">
-                              {lang === 'vi' ? "Chưa có cuộc trò chuyện nào trước đó. Chọn HLV hoặc kỹ thuật viên ở mục danh bạ phía dưới để khởi tạo chat ngay!" : (lang === 'zh' ? "尚无过往聊天记录。请在下方通讯录中选择教练或支持人员发起对话！" : "No previous conversations. Select a trainer or representative from the contacts list below to start chatting!")}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Section 2: Directory List (Tất cả nhân viên / PT) */}
-                      <div className="space-y-2">
-                        <span className="block text-[8px] font-mono font-black text-zinc-500 uppercase tracking-widest leading-none mb-1.5">{lang === 'vi' ? "DANH BẠ TRỰC TUYẾN" : (lang === 'zh' ? "在线通讯录" : "ONLINE CONTACTS")} ({mergedList.length})</span>
-                        
-                        {mergedList.length === 0 ? (
-                          <div className="p-8 bg-zinc-900/30 border border-dashed border-white/5 rounded-[2rem] text-center text-zinc-500 font-mono text-[9px]">
-                            {lang === 'vi' ? "KHÔNG TÌM THẤY NHÂN VIÊN PHÙ HỢP." : (lang === 'zh' ? "未找到符合条件的员工。" : "NO REPRESENTATIVES MATCHING SEARCH.")}
-                          </div>
-                        ) : (
-                          <div className="space-y-2.5">
-                            {mergedList.map(person => {
-                              const history = mobileDirectChats[person.id] || [];
-                              const lastMsg = history[history.length - 1];
-                              const lastText = lastMsg ? lastMsg.text : "";
-                              const isMe = lastMsg ? lastMsg.sender === "MEMBER" : false;
-                              const chatSnippet = lastMsg 
-                                ? `${isMe ? (lang === 'vi' ? "Bạn: " : (lang === 'zh' ? "你: " : "You: ")) : ""}${lastText}` 
-                                : (lang === 'vi' 
-                                  ? `Xin chào! Tôi là ${person.fullName}. Hãy gửi tin nhắn hỗ trợ để tôi tư vấn kĩ lưỡng nhất cho anh/chị nhé.` 
-                                  : (lang === 'zh' 
-                                    ? `你好！我是 ${person.fullName}。如果您需要任何咨询，请发消息给我！` 
-                                    : `Hello! I'm ${person.fullName}. Feel free to drop a message, I'll be glad to assist you.`));
-
-                              return (
-                                <div 
-                                  key={person.id} 
-                                  onClick={() => setActiveMobileChatId(person.id)}
-                                  className="bg-zinc-900 border border-white/5 p-4 rounded-[2rem] space-y-3.5 relative overflow-hidden transition-all hover:border-[#CCFF00]/25 cursor-pointer group hover:scale-[1.01]"
-                                >
-                                  {/* Top Row: Avatar & Person details */}
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-[#CCFF00]/5 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden relative">
-                                      {person.avatar ? (
-                                        <img src={person.avatar} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                                      ) : (
-                                        <UserIcon className="w-4.5 h-4.5 text-[#CCFF00]" />
-                                      )}
-                                      {person.isOnline && (
-                                        <span className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 border border-zinc-900 rounded-full" />
-                                      )}
-                                    </div>
-                                    
-                                    <div className="min-w-0 flex-1">
-                                      <span className={`inline-block px-1.5 py-0.5 rounded text-[6.5px] font-bold uppercase tracking-wider font-mono ${
-                                        person.role === "PT" ? "bg-amber-500/10 text-amber-400 border border-amber-500/15" : "bg-[#CCFF00]/10 text-[#CCFF00] border border-[#CCFF00]/15"
-                                      }`}>
-                                        {person.role === "PT" ? (lang === 'vi' ? "Huấn luyện viên" : (lang === 'zh' ? "私人健身教练" : "Personal Trainer")) : (lang === 'vi' ? "Lễ tân & Chăm sóc" : (lang === 'zh' ? "前台与客服" : "Reception & Support"))}
-                                      </span>
-                                      <h4 className="text-[11.5px] font-black uppercase text-white truncate leading-none mt-1">{person.fullName}</h4>
-                                      <p className="text-[8px] leading-tight italic font-bold text-zinc-500 truncate mt-0.5">{person.position}</p>
-                                    </div>
-                                  </div>
-
-                                  {/* Middle Row: Chat Snippet (Hiển thị đoạn chat) */}
-                                  <div className="bg-zinc-950/50 rounded-2xl p-2.5 border border-white/5 select-none hover:bg-zinc-950 transition-colors">
-                                    <span className="block text-[7.5px] font-mono text-zinc-500 uppercase tracking-widest leading-none mb-1 font-bold">{lang === 'vi' ? "Hội thoại/Giới thiệu:" : (lang === 'zh' ? "会话/简介:" : "Discussion/Bio:")}</span>
-                                    <p className="text-[10px] text-zinc-300 font-sans italic line-clamp-2 leading-relaxed">
-                                      {chatSnippet}
-                                    </p>
-                                  </div>
-
-                                  {/* Bottom Row: Dual Action Buttons (Call / Messenger) */}
-                                  <div className="flex justify-between items-center gap-2 pt-1">
-                                    {/* Call Link */}
-                                    <a 
-                                      href={`tel:${person.phone}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                      }}
-                                      className="bg-emerald-500/10 hover:bg-emerald-500 border border-emerald-500/20 hover:text-black py-2 rounded-xl text-[9px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors flex-1 text-center text-emerald-400 cursor-pointer h-8.5 font-mono"
-                                    >
-                                      <Phone className="w-3.5 h-3.5" /> {lang === 'vi' ? "Gọi trực tiếp" : (lang === 'zh' ? "拨打电话" : "Direct Call")}
-                                    </a>
-
-                                    {/* Messenger Button */}
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setActiveMobileChatId(person.id);
-                                      }}
-                                      className="bg-[#CCFF00]/10 hover:bg-[#CCFF00] hover:text-black border border-[#CCFF00]/20 py-2 px-3 rounded-xl text-[9px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer font-sans text-[#CCFF00] flex-1 h-8.5"
-                                    >
-                                      <MessageCircle className="w-3.5 h-3.5" /> {lang === 'vi' ? "Nhắn tin" : (lang === 'zh' ? "发起聊天" : "Message Us")}
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
-              </motion.div>
             )}
+
+
+
+
+
 
             {/* TAB 5: HỒ SƠ & GIAO DỊCH (PERSONAL PROFILE WITH SUB-TABS) */}
             {mobileActiveTab === "profile" && (
@@ -9282,12 +9296,9 @@ export default function App() {
               { id: "chatbot" as const, label: lang === 'vi' ? 'Trợ lý AI' : (lang === 'zh' ? 'AI 助手' : 'AI Assistant'), icon: Sparkles },
               { 
                 id: "support" as const, 
-                label: user.role === "PT" 
-                  ? (lang === 'vi' ? 'Học viên' : 'Clients') 
-                  : (lang === 'vi' ? 'Hỗ trợ' : (lang === 'zh' ? '支持' : 'Support')), 
+                label: lang === 'vi' ? 'Tin nhắn' : (lang === 'zh' ? '消息' : 'Messages'), 
                 icon: MessageSquare 
               },
-              { id: "profile" as const, label: lang === 'vi' ? 'Hồ sơ' : (lang === 'zh' ? '资料' : 'Profile'), icon: UserIcon },
             ].map((item) => {
               const IsActive = mobileActiveTab === item.id;
               const IconEl = item.icon;
@@ -9297,9 +9308,6 @@ export default function App() {
                   type="button"
                   onClick={() => {
                     setMobileActiveTab(item.id);
-                    if (item.id === "profile") {
-                      setMobileProfileSubTab("profile");
-                    }
                   }}
                   className={`relative flex flex-col items-center justify-center w-[60px] h-12 rounded-[1.2rem] transition-all duration-300 cursor-pointer ${
                     IsActive ? 'text-[#CCFF00] font-black' : 'text-zinc-500 hover:text-white font-medium'
@@ -17315,7 +17323,11 @@ export default function App() {
                             onClick={async () => {
                               setIsAiAnalyzing(true);
                               try {
-                                const res = await fetch("/api/ai/behavior-analysis", { method: "POST" });
+                                const res = await fetch("/api/ai/behavior-analysis", { 
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ members })
+                                });
                                 const data = await res.json();
                                 setAiBehaviorInsight(data.analysis);
                               } finally {
